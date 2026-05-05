@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip:*)",
+      "Bash(python:*)",
+      "Bash(jupyter:*)",
+      "Bash(pytest:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(flake8:*)",
+      "Bash(streamlit:*)",
+      "Read(**)",
+      "Write(src/**)",
+      "Write(notebooks/**)",
+      "Write(streamlit_app/**)",
+      "Write(report/**)",
+      "Write(tests/**)"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Write(data/raw/**)",
+      "Write(.env:*)",
+      "Write(requirements.txt:*)"
+    ]
+  },
+  "hooks": {
+    "after_edit_src": "flake8 src/ --max-line-length=100 --quiet"
+  }
+}
