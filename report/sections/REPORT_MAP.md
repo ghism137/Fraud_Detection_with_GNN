@@ -4,9 +4,9 @@ Bảng quy định ngữ cảnh động cho việc viết báo cáo thành phầ
 
 | Section Code | Tiêu đề Báo Cáo | Context Files (Nguồn cần đọc) |
 |--------------|-----------------|-------------------------------|
-| `01_preprocess` | 01. Tiền xử lý & Dual-Pipeline | `src/preprocessing/pipeline_a_lgbm.py`, `src/preprocessing/pipeline_b_mlp.py`, `.claude/project/session_state.md` |
-| `02_cart` | 02. Feature Selection (CART) | `src/kdd/cart_tree.py`, `.claude/project/session_state.md` |
-| `03_baseline` | 03. LightGBM Baseline | `src/baseline/lgbm_trainer.py`, `.claude/project/session_state.md` |
+| `01_preprocess` | 01. Tiền xử lý & Dual-Pipeline | `src/preprocessing/pipeline_a_lgbm.py`, `src/preprocessing/pipeline_b_mlp.py`, `src/config.py`, `.claude/project/session_state.md` |
+| `02_cart` | 02. Feature Selection (CART) | `src/kdd/cart_tree.py`, `src/kdd/feature_selection.py`, `src/config.py`, `.claude/project/session_state.md` |
+| `03_baseline` | 03. LightGBM Baseline | `src/baseline/lgbm_trainer.py`, `src/pipelines/run_lgbm.py`, `src/config.py`, `.claude/project/session_state.md` |
 | `04_mlp` | 04. Custom MLP (Numpy) | `src/mlp_numpy/mlp_trainer.py`, `src/mlp_numpy/layers.py`, `src/mlp_numpy/optimizers.py`, `.claude/project/session_state.md` |
 | `05_graph` | 05. Heuristic Graph Construction | `src/graph/builder.py`, `src/graph/dataset.py`, `.claude/project/session_state.md` |
 | `06_gnn` | 06. PyG GNN Training | `src/models/gat.py`, `.claude/project/session_state.md` |
