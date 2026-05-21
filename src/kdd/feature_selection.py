@@ -21,14 +21,23 @@ import pandas as pd
 _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, _PROJECT_ROOT)
 
+from src.config import (
+    RANDOM_SEED,
+    CART_TOP_K,
+    CART_MAX_DEPTH,
+    CART_MIN_SAMPLES,
+    CART_MAX_BINS,
+    CART_CLASS_WEIGHT,
+    DEBUG_N_SAMPLES,
+    CART_CACHE_FILE,
+    CART_CACHE_FILE_DEBUG,
+)
 from src.preprocessing.pipeline_a_lgbm import CustomTargetEncoder
 from src.kdd.cart_tree import DecisionTreeFeatureSelector
 
 # ---------------------------------------------------------------------------
-# Constants
+# Constants cục bộ (không đưa vào config vì là chi tiết triển khai nội bộ)
 # ---------------------------------------------------------------------------
-RANDOM_SEED = 42
-
 # M-flag mapping: T=match, F=mismatch, NaN=unknown
 M_FLAG_COLS = ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9']
 M_FLAG_MAP  = {'T': 1.0, 'F': 0.0}  # NaN → -1.0 handled separately
@@ -40,7 +49,7 @@ DROP_COLS = ['TransactionID', 'isFraud']
 # ---------------------------------------------------------------------------
 # Step 1: Load & merge
 # ---------------------------------------------------------------------------
-def load_and_merge(data_dir, debug_mode=False, n_samples=50_000, random_state=RANDOM_SEED):
+def load_and_merge(data_dir, debug_mode=False, n_samples=DEBUG_N_SAMPLES, random_state=RANDOM_SEED):
     """
     Load train_transaction.csv + train_identity.csv và LEFT JOIN qua TransactionID.
 
@@ -116,7 +125,7 @@ def encode_m_flags(df):
 # ---------------------------------------------------------------------------
 # Step 3: Prepare features for CART
 # ---------------------------------------------------------------------------
-def prepare_for_cart(df, y, random_state=RANDOM_SEED):
+def prepare_for_cart(df, y, random_state=RANDOM_SEED):  # RANDOM_SEED từ config
     """
     Tiền xử lý đầy đủ để đưa dữ liệu vào CART:
       1. Drop non-feature columns (ID, target)
@@ -169,11 +178,11 @@ def prepare_for_cart(df, y, random_state=RANDOM_SEED):
 # ---------------------------------------------------------------------------
 def run_cart_feature_selection(
     X, y, feature_names,
-    top_k=50,
-    max_depth=5,
-    min_samples_split=20,
-    max_bins=256,
-    class_weight=27.6
+    top_k=CART_TOP_K,
+    max_depth=CART_MAX_DEPTH,
+    min_samples_split=CART_MIN_SAMPLES,
+    max_bins=CART_MAX_BINS,
+    class_weight=CART_CLASS_WEIGHT
 ):
     """
     Khởi chạy DecisionTreeFeatureSelector (CART tự code numpy).
@@ -233,8 +242,9 @@ def save_results(results, output_dir, debug_mode=False):
     print("[4/4] Saving results...")
     os.makedirs(output_dir, exist_ok=True)
 
-    suffix      = '_debug' if debug_mode else ''
-    output_path = os.path.join(output_dir, f'top50_features{suffix}.json')
+    # Dùng tên file từ config — Single Source of Truth
+    filename    = CART_CACHE_FILE_DEBUG if debug_mode else CART_CACHE_FILE
+    output_path = os.path.join(output_dir, filename)
 
     output_data = {
         'metadata': {
@@ -261,9 +271,9 @@ def save_results(results, output_dir, debug_mode=False):
 # Convenience: run full pipeline in one call
 # ---------------------------------------------------------------------------
 def run_pipeline(data_dir, output_dir, debug_mode=False,
-                 n_samples=50_000, top_k=50,
-                 max_depth=5, min_samples_split=20,
-                 max_bins=256, class_weight=27.6,
+                 n_samples=DEBUG_N_SAMPLES, top_k=CART_TOP_K,
+                 max_depth=CART_MAX_DEPTH, min_samples_split=CART_MIN_SAMPLES,
+                 max_bins=CART_MAX_BINS, class_weight=CART_CLASS_WEIGHT,
                  random_state=RANDOM_SEED):
     """
     Pipeline đầy đủ: Load → Encode → CART → Save.

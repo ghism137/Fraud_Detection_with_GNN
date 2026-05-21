@@ -44,26 +44,37 @@ from src.kdd.feature_selection import (
     run_cart_feature_selection,
     save_results,
 )
+from src.config import (
+    RANDOM_SEED,
+    DATA_DIR       as CFG_DATA_DIR,
+    PROCESSED_DIR  as CFG_PROCESSED_DIR,
+    CART_TOP_K,
+    CART_MAX_DEPTH,
+    CART_MIN_SAMPLES,
+    CART_MAX_BINS,
+    CART_CLASS_WEIGHT,
+    DEBUG_N_SAMPLES,
+)
 
 # ===========================================================================
-# ██ BƯỚC 1: Setup — CONFIG (thay đổi ở đây)
+# BƯỚC 1: Setup — CONFIG
 # ===========================================================================
+# Thay đổi DUY NHẤT ở đây khi chuyển local → Kaggle production:
 # ⚡ Local testing : DEBUG_MODE = True   (50k rows, ~5 phút)
-# 🚀 Kaggle full  : DEBUG_MODE = False  (590k rows, ~30–60 phút)
-DEBUG_MODE       = True
-N_SAMPLES_DEBUG  = 50_000
-RANDOM_SEED      = 42
+# Kaggle full  : DEBUG_MODE = False  (590k rows, ~30–60 phút)
+DEBUG_MODE = True
 
-# CART hyperparameters — đã kiểm chứng (không cần thay đổi)
-TOP_K            = 50
-MAX_DEPTH        = 5
-MIN_SAMPLES_SPLIT= 20
-MAX_BINS         = 256
-CLASS_WEIGHT     = 27.6  # ≈ (1 - 0.035) / 0.035 — pos_weight cho Fraud
+# Mọi hyperparameter lấy từ src/config.py — KHÔNG hard-code ở đây
+N_SAMPLES_DEBUG   = DEBUG_N_SAMPLES     # 50_000
+TOP_K             = CART_TOP_K          # 50
+MAX_DEPTH         = CART_MAX_DEPTH      # 5
+MIN_SAMPLES_SPLIT = CART_MIN_SAMPLES    # 20
+MAX_BINS          = CART_MAX_BINS       # 256
+CLASS_WEIGHT      = CART_CLASS_WEIGHT   # 27.6
 
-# Paths
-DATA_DIR    = os.path.join(PROJECT_ROOT, 'data', 'raw')
-OUTPUT_DIR  = os.path.join(PROJECT_ROOT, 'data', 'processed')
+# Paths từ config (đã resolve thành absolute path)
+DATA_DIR    = CFG_DATA_DIR
+OUTPUT_DIR  = CFG_PROCESSED_DIR
 FIGURES_DIR = os.path.join(PROJECT_ROOT, 'report', 'figures')
 os.makedirs(FIGURES_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
